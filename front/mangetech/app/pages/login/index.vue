@@ -44,13 +44,15 @@ definePageMeta({
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+const API_URL = "https://cage-int-cqg3ahh4a4hjbhb4.westus3-01.azurewebsites.net"
+
 const email = ref('')
 const password = ref('')
 const router = useRouter()
 
 async function login() {
   try {
-    const response = await fetch('http://localhost:8001/api/auth/token/login/', {
+    const response = await fetch(`${API_URL}/api/auth/token/login/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -62,7 +64,9 @@ async function login() {
     })
 
     if (!response.ok) {
-      throw new Error('Erro no login: ' + response.statusText)
+      const err = await response.text()
+      console.error("Erro no login:", err)
+      throw new Error("Credenciais inválidas ou erro no servidor.")
     }
 
     const data = await response.json()
@@ -70,13 +74,12 @@ async function login() {
 
     if (data.auth_token) {
       localStorage.setItem('auth_token', data.auth_token)
-      alert('Login bem sucedido!')
-      router.push('/inicio') // redireciona 
+      router.push('/inicio')
     } else {
-      alert('Token não recebido no login')
+      alert('Nenhum token recebido no login.')
     }
-  } catch (error) {
-    console.error('Erro no login:', error)
+  } catch (error: any) {
+    console.error('❌ Erro no login:', error)
     alert('Falha ao fazer login: ' + error.message)
   }
 }
