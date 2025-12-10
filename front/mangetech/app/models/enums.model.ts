@@ -1,0 +1,13 @@
+export enum URGENCY_LEVEL {
+    LOW = 'LOW',
+    MEDIUM = 'MEDIUM',
+    HIGH = 'HIGH',
+    EXTRA_HIGH = 'EXTRA_HIGH', 
+}
+
+export enum TASK_STATUS {
+  ABERTO = "ABERTO",
+  EM_ANDAMENTO = "EM_ANDAMENTO",
+  CONCLUIDO = "CONCLUIDO",
+  CANCELADO = "CANCELADO",
+}
