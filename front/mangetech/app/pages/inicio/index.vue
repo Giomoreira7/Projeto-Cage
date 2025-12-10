@@ -53,18 +53,23 @@ import mapBrasil from '@/assets/images/map.png'
 import celularImage from '@/assets/images/telateste1.png'
 import computadorImage from '@/assets/images/comp.png'
 
+// 🌐 URL DA API
+const API_URL = "https://cage-int-cqg3ahh4a4hjbhb4.westus3-01.azurewebsites.net"
+
 // ⭐ TOTAL REAL DE CHAMADOS
 const totalChamados = ref(0)
 
 async function carregarTotalChamados() {
   try {
-    const token = process.client ? localStorage.getItem("auth_token") : null
+    if (!process.client) return
+
+    const token = localStorage.getItem("auth_token")
     if (!token) {
       console.error("Token não encontrado")
       return
     }
 
-    const response = await fetch("http://localhost:8001/api/task/", {
+    const response = await fetch(`${API_URL}/api/task/`, {
       headers: {
         "Authorization": `Token ${token}`,
         "Content-Type": "application/json"
@@ -72,22 +77,21 @@ async function carregarTotalChamados() {
     })
 
     if (!response.ok) {
-      console.error("Erro ao buscar total de chamados")
+      console.error("❌ Erro ao buscar total de chamados:", response.status)
       return
     }
 
     const data = await response.json()
 
-    // 👉 Total verdadeiro retornado pelo DRF
-    totalChamados.value = data.count
+    // 👉 Total retornado pelo Django REST Framework
+    totalChamados.value = data.count || 0
 
   } catch (error) {
-    console.error("Erro ao carregar total de chamados:", error)
+    console.error("❌ Erro ao carregar total de chamados:", error)
   }
 }
 
-
-// Carrossel
+// ---------------------------- CARROSSEL ----------------------------
 const slides = ref([
   { title: "SUA CENTRAL DE CHAMADOS", highlight: "RÁPIDA", image: celularImage },
   { title: "ORGANIZAÇÃO EM QUALQUER LUGAR", highlight: "INTELIGENTE", image: computadorImage }
@@ -106,6 +110,7 @@ onMounted(() => {
 
 onUnmounted(() => clearInterval(intervalId))
 </script>
+
 
 <style scoped lang="scss">
 /* ———— TODO SEU CSS (NÃO ALTEREI NADA) ———— */
